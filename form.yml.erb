@@ -3,6 +3,7 @@ cluster: "fox"
 
 form:
   - auto_accounts
+  - auto_modules_ParaView
   - ec_alacarte
   - ec_mem
   - ec_cpus
@@ -11,10 +12,14 @@ form:
   - ec_modules
 
 attributes:
+
+  auto_modules_ParaView:
+    default: false
+
   auto_accounts:
-   label: "Choose the Educloud project:"
-   help: |
-          <small>If you are unsure, ask the project principal</small>
+    label: "Choose the Educloud project:"
+    help: |
+           <small>If you are unsure, ask the project principal</small>
 
 <%= FormTemplate.fox_alacarte %>
 
