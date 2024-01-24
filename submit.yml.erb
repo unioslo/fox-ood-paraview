@@ -9,7 +9,7 @@ batch_connect:
     %s
     EOF
 
-    export APPTAINER_BINDPATH="$HOME,/cluster,/fp,/srv,/var/run,/run,/tmp,/node,/localscratch,/etc/profile.d,/projects,/etc/ssh/ssh_config.d"
+    export APPTAINER_BINDPATH="$HOME,/cluster,/fp,/srv,/var/run,/tmp,/node,/localscratch,/etc/profile.d,/projects,/etc/ssh/ssh_config.d"
 
     <%- if ec_gpus.to_i > 0 -%>
     export APPTAINERENV_CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES
