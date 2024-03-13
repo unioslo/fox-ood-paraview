@@ -31,6 +31,9 @@ script:
                 <%- when 'A100' -%>
                   "--partition=accel",
                   "--gres=gpu:a100:<%= ec_gpus.to_i %>",
+                <% when 'MIG' -%>
+                  "--partition=accel",
+                  "-G 1",
                 <%- else -%>
                   "--partition=accel",
                   "-G", "<%= ec_gpus.to_i %>",
