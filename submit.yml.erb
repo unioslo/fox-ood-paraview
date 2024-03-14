@@ -11,7 +11,7 @@ batch_connect:
 
     export APPTAINER_BINDPATH="$HOME,/cluster,/fp,/srv,/var/run,/tmp,/node,/localscratch,/etc/profile.d,/projects,/etc/ssh/ssh_config.d"
 
-    <%- if ec_gpus.to_i > 0 -%>
+    <%- if ec_gpus.to_i > 0 && ec_alacarte != "MIG" -%>
     export APPTAINERENV_CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES
     pci=$(nvidia-smi --query-gpu=gpu_bus_id --format=csv,noheader | head -1 | cut -b 5- | tr '[:upper:]' '[:lower:]')
     card=$(ls -d /sys/bus/pci/devices/"$pci"/drm/card? | awk -F/ '{print $NF}')
@@ -32,8 +32,8 @@ script:
                   "--partition=accel",
                   "--gres=gpu:a100:<%= ec_gpus.to_i %>",
                 <% when 'MIG' -%>
-                  "--partition=accel",
-                  "-G 1",
+                  "--partition=mig",
+                  "-G", "<%= ec_gpus.to_i %>",
                 <%- else -%>
                   "--partition=accel",
                   "-G", "<%= ec_gpus.to_i %>",
