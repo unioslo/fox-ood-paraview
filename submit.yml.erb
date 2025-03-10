@@ -1,31 +1,12 @@
----
 batch_connect:
-  template: vnc
-  websockify_cmd: '/usr/bin/websockify'
-  script_wrapper: |
-    cat << "EOF" > container.sh
-    export PATH="$PATH:/opt/TurboVNC/bin"
-    xset s off -dpms
-    %s
-    EOF
+  template: "basic"
 
-    export APPTAINER_BINDPATH="$HOME,/cluster,/fp,/srv,/var/run,/tmp,/node,/localscratch,/etc/profile.d,/projects,/etc/ssh/ssh_config.d"
-
-    <%- if ec_gpus.to_i > 0 && ec_alacarte != "MIG" -%>
-    export APPTAINERENV_CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES
-    pci=$(nvidia-smi --query-gpu=gpu_bus_id --format=csv,noheader | head -1 | cut -b 5- | tr '[:upper:]' '[:lower:]')
-    card=$(ls -d /sys/bus/pci/devices/"$pci"/drm/card? | awk -F/ '{print $NF}')
-    export VGL_DISPLAY=/dev/dri/$card
-    apptainer run --env dridev=$VGL_DISPLAY --nv /cluster/opt/OOD/fox-desktop-virtualgl-1.0.0.sif /bin/bash container.sh
-    <%- else -%>
-    apptainer run /cluster/opt/OOD/fox-desktop-virtualgl-1.0.0.sif /bin/bash container.sh
-    <%- end -%> 
 script:
   job_name: "OOD Desktop"
   native: [
             "-c", "<%= ec_cpus.blank?  ? 1 : ec_cpus.to_i %>",
            <%- if ec_gpus.to_i > 0 -%>
-              <%- case ec_alacarte -%>
+              <%- case global_fox_alacarte -%>
                 <%- when 'RTX30' -%>
                   "--partition=accel",
                   "--gres=gpu:rtx30:<%= ec_gpus.to_i %>",
@@ -37,22 +18,29 @@ script:
                   "--partition=accel",
                   "--gres=gpu:a100:<%= ec_gpus.to_i %>",
                   "--exclude=gpu-[1-2,13]",
-                <% when 'MIG' -%>
+                <% when 'A40' -%>
+                  "--partition=accel",
+                  "--gres=gpu:a40",
+                <%- when 'L40S' -%>
+                  "--partition=accel",
+                  "--gres=gpu:l40s:<%= ec_gpus.to_i %>",
+                <%- when 'H100NV' -%>
+                  "--partition=accel",
+                  "--gres=gpu:h100nv:<%= ec_gpus.to_i %>",
+                <%- when 'MIG' -%>
                   "--partition=mig",
                   "-G", "<%= ec_gpus.to_i %>",
                 <%- else -%>
                   "--partition=accel",
-                  "-G", "<%= ec_gpus.to_i %>",
-                <%- end -%> 
+                  "--gres=gpu:<%= global_fox_gpugres %>:<%= ec_gpus.to_i %>",
+                <%- end -%>
 
             <%- else -%>
                 "--partition=normal",
             <%- end -%>
-    
+
             <%- if not ec_mem.blank? -%>
                 "--mem", "<%= ec_mem.to_i %>G"
             <%- end -%>
 
           ]
-
-            
