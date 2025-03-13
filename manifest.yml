@@ -1,10 +1,11 @@
 ---
-name: Fox Desktop
+name: ParaView
 category: Interactive Apps
 subcategory: Desktops
 role: batch_connect
 description: |
-        Launches a lightweight XFCE desktop environment, hosted in a container.
-        GPU rendering is enabled. To use, start your program with `vglrun -d egl <application>`.
+        Launches ParaView in a lightweight XFCE desktop environment, hosted in a container.
+        GPU-enabled.
+
 tile:
-  sub_caption: "XFCE desktop"
+  sub_caption: "XFCE desktop + ParaView"

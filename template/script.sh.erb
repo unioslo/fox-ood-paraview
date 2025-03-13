@@ -1,5 +1,4 @@
 cd
-export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK}
 export PS1="[\u@\h \W-Apptainer]\$ "
 # Remove any preconfigured monitors
 #
@@ -52,4 +51,10 @@ xfconf-query -c xfce4-screensaver -p /saver/enabled -s false
 xfconf-query -c xfce4-screensaver -p /lock/enabled -s false
 
 # Start up xfce desktop (block until user logs out of desktop)
-xfce4-session
+(xfce4-session) &
+module load <%= context.auto_modules_paraview %>
+<%- if context.ec_gpus.to_i > 0 -%>
+vglrun paraview
+<%- else -%>
+paraview
+<%- end -%>
