@@ -1,4 +1,4 @@
-# Fox Desktop for Open OnDemand
+# Paraview for Open OnDemand
 
 ParaView app for Open Ondemand, as used on the Fox HPC cluster at University of Oslo.
 Supports GPU via VirtualGL
